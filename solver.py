@@ -28,7 +28,23 @@ class TubeState:
     def ball_count(self) -> int:
         balls = self.contents.replace('x','')
         return len(balls)
-
+    def remove_ball(self, t_cap) -> str:
+        if self.is_empty():
+            raise ValueError('Trying to remove ball from empty tube')
+        ballcount = self.ball_count()
+        color = self.contents[ballcount - 1]
+        #TODO: create the new state string and overwrite
+        newstate = ''
+        if ballcount > 1:
+            newstate += self.contents[0:(ballcount - 1)]
+        newstate += (t_cap - ballcount + 1) * 'x'
+        self.contents = newstate
+        return color
+    def add_ball(self, color) -> int:
+        if self.is_full():
+            raise ValueError('Trying to add ball to full tube')
+        self.contents[self.ball_count()] = color
+        return self.ball_count()
 
 @dataclass
 class Move:
@@ -106,9 +122,16 @@ class BallSortGame:
                 self.state_sequence.p_seq[-1].poss_moves += [[from_tube, to_tube]]
 
     def eliminate_loop_moves(self):
-        """Readiness:Hardcoded"""
-        "For the possible move, compute the next state. Check if the next state has already been visited, using check_state_equivalence(). If yes, delete that possible move."
-        pass
+        """Readiness:Partial"""
+        "For each possible move, compute the next state. Check if the next state has already been visited, using check_state_equivalence(). If yes, delete that possible move."
+        state = self.state_sequence.p_seq[-1].p_state
+        for from_tube, to_tube in self.state_sequence.p_seq[-1].poss_moves:
+            # Compute the possible next state
+            poss_state = state
+            color = poss_state[from_tube].remove_ball(self.t_cap)
+            poss_state[to_tube].add_ball(color)
+            # Check if the possible next state has already been visited and take action
+            #TODO
 
     def moves_possible(self):
         """Readiness:Hardcoded"""
