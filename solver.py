@@ -30,27 +30,36 @@ class TubeState:
         return len(balls)
     def remove_ball(self, t_cap) -> str:
         if self.is_empty():
-            raise ValueError('Trying to remove ball from empty tube')
+            raise ValueError('Trying to remove ball from an empty tube')
         ballcount = self.ball_count()
         color = self.contents[ballcount - 1]
-        #TODO: create the new state string and overwrite
         newstate = ''
         if ballcount > 1:
             newstate += self.contents[0:(ballcount - 1)]
         newstate += (t_cap - ballcount + 1) * 'x'
         self.contents = newstate
         return color
-    def add_ball(self, color) -> int:
+    def add_ball(self, t_cap, color) -> int:
         if self.is_full():
-            raise ValueError('Trying to add ball to full tube')
-        self.contents[self.ball_count()] = color
-        return self.ball_count()
+            raise ValueError('Trying to add ball to a full tube')
+        #TODO: create the new state string and overwrite
+        ballcount = self.ball_count()
+        newstate = ''
+        newstate += self.contents[0:ballcount] + color
+        newstate += (t_cap - ballcount - 1) * 'x'
+        self.contents = newstate
+        return (ballcount + 1)
 
 @dataclass
 class Move:
     """Class for recording a ball move in the puzzle."""
     from_t: int
     to_t: int
+
+@dataclass
+class MoveSequence:
+    """Class for recording the move sequence."""
+    m_seq: list[Move]
 
 @dataclass
 class PuzzleState:
@@ -83,7 +92,7 @@ class BallSortGame:
         initial_state = PuzzleState(i_state, poss_moves)
         self.state_sequence = PuzzleSequence([initial_state])
         self.states_visited = StatesVisited([initial_state])
-        self.move_sequence = []
+        self.move_sequence = MoveSequence([])
         self.game_solved = False
         self.game_over = False
 
@@ -125,13 +134,25 @@ class BallSortGame:
         """Readiness:Partial"""
         "For each possible move, compute the next state. Check if the next state has already been visited, using check_state_equivalence(). If yes, delete that possible move."
         state = self.state_sequence.p_seq[-1].p_state
+        poss_state = PuzzleState([], [])
+        to_delete_moves = MoveSequence([])
         for from_tube, to_tube in self.state_sequence.p_seq[-1].poss_moves:
             # Compute the possible next state
-            poss_state = state
-            color = poss_state[from_tube].remove_ball(self.t_cap)
-            poss_state[to_tube].add_ball(color)
-            # Check if the possible next state has already been visited and take action
-            #TODO
+            # The below statement creates a pointer to state, not a copy of it
+            #poss_state = state
+            for _ in range(self.no_t):
+                poss_state.p_state += [state[_]]
+            color = poss_state.p_state[from_tube].remove_ball(self.t_cap)
+            poss_state.p_state[to_tube].add_ball(self.t_cap, color)
+            print(poss_state)
+            # Check if the possible next state has already been visited and mark it for deletion
+            for v_state in self.states_visited.s_visited:
+                if self.check_state_equivalence(poss_state, v_state):
+                    print(f'Possible state {poss_state} already visited: {v_state}')
+                    to_delete_moves += [[from_tube, to_tube]]
+        for del_move in to_delete_moves:
+            print(f'Deleting move {del_move}')
+            #TODO remove visited moves
 
     def moves_possible(self):
         """Readiness:Hardcoded"""
