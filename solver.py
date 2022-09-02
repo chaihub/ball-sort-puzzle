@@ -138,10 +138,9 @@ class BallSortGame:
         to_delete_moves = MoveSequence([])
         for from_tube, to_tube in self.state_sequence.p_seq[-1].poss_moves:
             # Compute the possible next state
-            # The below statement creates a pointer to state, not a copy of it
-            #poss_state = state
             for _ in range(self.no_t):
-                poss_state.p_state += [state[_]]
+                tubecontents = state[_].contents
+                poss_state.p_state += [TubeState(tubecontents)]
             color = poss_state.p_state[from_tube].remove_ball(self.t_cap)
             poss_state.p_state[to_tube].add_ball(self.t_cap, color)
             print(poss_state)
