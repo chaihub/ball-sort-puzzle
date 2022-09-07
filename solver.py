@@ -13,21 +13,27 @@ import sys
 import os
 from dataclasses import dataclass, asdict
 
+
 @dataclass
 class TubeState:
     """Class for recording a state of the tube."""
     contents: str
+
     def is_empty(self) -> bool:
-        balls = self.contents.replace('x','')
+        balls = self.contents.replace('x', '')
         return not balls
+
     def is_full(self) -> bool:
-        return ('x' not in self.contents) 
+        return ('x' not in self.contents)
+
     def top_ball(self) -> str:
-        balls = self.contents.replace('x','')
+        balls = self.contents.replace('x', '')
         return balls[-1] if balls else 'x'
+
     def ball_count(self) -> int:
-        balls = self.contents.replace('x','')
+        balls = self.contents.replace('x', '')
         return len(balls)
+
     def remove_ball(self, t_cap) -> str:
         if self.is_empty():
             raise ValueError('Trying to remove ball from an empty tube')
@@ -39,10 +45,11 @@ class TubeState:
         newstate += (t_cap - ballcount + 1) * 'x'
         self.contents = newstate
         return color
+
     def add_ball(self, t_cap, color) -> int:
         if self.is_full():
             raise ValueError('Trying to add ball to a full tube')
-        #TODO: create the new state string and overwrite
+        # TODO: create the new state string and overwrite
         ballcount = self.ball_count()
         newstate = ''
         newstate += self.contents[0:ballcount] + color
@@ -50,16 +57,19 @@ class TubeState:
         self.contents = newstate
         return (ballcount + 1)
 
+
 @dataclass
 class Move:
     """Class for recording a ball move in the puzzle."""
     from_t: int
     to_t: int
 
+
 @dataclass
 class MoveSequence:
     """Class for recording the move sequence."""
     m_seq: list[Move]
+
 
 @dataclass
 class PuzzleState:
@@ -67,26 +77,29 @@ class PuzzleState:
     p_state: list[TubeState]
     poss_moves: list[Move]
 
+
 @dataclass
 class PuzzleSequence:
     """Class for recording the puzzle solution sequence."""
     p_seq: list[PuzzleState]
+
 
 @dataclass
 class StatesVisited:
     """Class for recording every state reached."""
     s_visited: list[PuzzleState]
 
+
 class BallSortGame:
     def __init__(self):
         """Readiness:Hardcoded"""
-        self.no_t = 3    # Number of tubes
-        self.t_cap = 3   # Tube capacity
-        self.no_c = 2    # Number of ball colors
-        self.no_b = 2    # Number of balls of each color
+        self.no_t = 3  # Number of tubes
+        self.t_cap = 3  # Tube capacity
+        self.no_c = 2  # Number of ball colors
+        self.no_b = 2  # Number of balls of each color
         # Convention: tube contents listed bottom first
-        #TODO: Read inputs and check constraints
-        #i_state = ['xxx', 'GBx', 'BGx']
+        # TODO: Read inputs and check constraints
+        # i_state = ['xxx', 'GBx', 'BGx']
         i_state = [TubeState('xxx'), TubeState('GBx'), TubeState('BGx')]
         poss_moves = []
         initial_state = PuzzleState(i_state, poss_moves)
@@ -98,7 +111,7 @@ class BallSortGame:
 
     def check_if_solved(self):
         """Readiness:Partial"""
-        #TODO: Need to also check if the correct number of balls are in each filled tube
+        # TODO: Need to also check if the correct number of balls are in each filled tube
         current_state = self.state_sequence.p_seq[-1].p_state
         solved = True
         for t in range(self.no_t):
@@ -110,12 +123,15 @@ class BallSortGame:
 
     def check_state_equivalence(self, s1, s2):
         """Readiness:Hardcoded"""
-        "Make copies of both states. Loop through tubes in one and delete that tube from both states. If both state copies are empty at the end, then the states are equivalent."
+        "Make copies of both states. Loop through tubes in one and delete that tube from both states. If both state " \
+        "copies are empty at the end, then the states are equivalent."
         pass
 
     def identify_possible_moves(self):
         """Readiness:Full"""
-        "For each tube, check all other tubes that can accept the top ball. Possible moves = pairs of (tube_from, tube_to). Can accept if fully empty or if at least one empty location with top ball of same color. Store along with current state."
+        "For each tube, check all other tubes that can accept the top ball. Possible moves = pairs of (tube_from, " \
+        "tube_to). Can accept if fully empty or if at least one empty location with top ball of same color. Store " \
+        "along with current state."
         state = self.state_sequence.p_seq[-1].p_state
         for from_tube in range(self.no_t):
             if state[from_tube].is_empty():
@@ -126,7 +142,7 @@ class BallSortGame:
                 if state[to_tube].is_full():
                     continue
                 if not state[to_tube].is_empty() and \
-                (state[from_tube].top_ball() != state[to_tube].top_ball()):
+                        (state[from_tube].top_ball() != state[to_tube].top_ball()):
                     continue
                 self.state_sequence.p_seq[-1].poss_moves += [[from_tube, to_tube]]
 
@@ -151,7 +167,7 @@ class BallSortGame:
                     to_delete_moves += [[from_tube, to_tube]]
         for del_move in to_delete_moves:
             print(f'Deleting move {del_move}')
-            #TODO remove visited moves
+            # TODO remove visited moves
 
     def moves_possible(self):
         """Readiness:Hardcoded"""
@@ -216,6 +232,7 @@ def main():
                 this_game.move_back()
 
     report_results(this_game)
+
 
 if __name__ == '__main__':
     main()
