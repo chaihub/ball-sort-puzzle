@@ -12,6 +12,7 @@ Created by Chaitanya Rajguru 01-Aug-2022
 from python_graphql_client import GraphqlClient
 import asyncio
 
+#TODO: token privacy
 headers = {"Authorization": "Bearer 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"}
 client = GraphqlClient(endpoint="https://github.whirlpool.com/api/graphql")
 
@@ -23,15 +24,15 @@ query = """
     }
 """
 
-# Asynchronous request
-result = asyncio.run(client.execute_async(query=query, headers=headers))
+# Asynchronous request example
+#result = asyncio.run(client.execute_async(query=query, headers=headers))
+#print(result['data']['viewer']['login'])
 
-print(result['data']['viewer']['login'])
 
-
+#TODO: Move queries to a file; combine into a single query if possible
 query_initial = """
     query($first:Int!) {
-        organization(login:"gpo-electronics-legacy") {
+        organization(login:"gpo-electronics-legacyMKS") {
             repositories(first: $first) {
                 totalCount
                 edges {
@@ -51,7 +52,7 @@ query_initial = """
 """
 query_subseq = """
     query($first:Int!, $after:String) {
-        organization(login:"gpo-electronics-legacy") {
+        organization(login:"gpo-electronics-legacyMKS") {
             repositories(first: $first, after: $after) {
                 totalCount
                 edges {
@@ -74,7 +75,7 @@ has_next_page = True
 after = ''
 initial_query = True
 result = {}
-count = 0
+repo_list = []
 
 while has_next_page:
     if initial_query:
@@ -90,7 +91,11 @@ while has_next_page:
 
     after = result['data']['organization']['repositories']['pageInfo']['endCursor']
     has_next_page = result['data']['organization']['repositories']['pageInfo']['hasNextPage']
-    count += len(result['data']['organization']['repositories']['edges'])
+    for edge in result['data']['organization']['repositories']['edges']:
+        repo_list.append([edge['node']['name'], edge['node']['isEmpty']])
 
 #TODO: Collect and print results
-print(f'Found {count} repositories')
+with open('oldrepos.txt', 'w', encoding="utf-8") as outfile:
+    outfile.write(f'Found {len(repo_list)} repositories\n')
+    for _r in repo_list:
+        outfile.write(f'{_r[0]} {str(_r[1])}\n')
