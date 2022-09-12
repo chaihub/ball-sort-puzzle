@@ -1,0 +1,284 @@
+{
+  "game_name": "simple_RGB_almostdone",
+  "comments": "Stopped one step before the final solution.
+        Initial state:            BRG, RBx, RGx, GBx
+        Next state in solution:   BRx, RBx, RGG, GBx
+        Next state in solution:   BRx, Rxx, RGG, GBB | BRx, RBB, RGG, Gxx
+        Next state in solution:   Bxx, RRx, RGG, GBB | BRx, RBB, RGx, GGx
+        Next state in solution:   BBx, RRx, RGG, GBx | BRx, RBB, Rxx, GGG
+        Next state in solution:   BBB, RRx, RGG, Gxx | Bxx, RBB, RRx, GGG
+        Next state in solution:   BBB, RRx, RGx, GGx | BBx, RBx, RRx, GGG
+        Next state in solution:   BBB, RRx, Rxx, GGG | BBB, Rxx, RRx, GGG
+        Final state in solution:   BBB, RRR, xxx, GGG | BBB, xxx, RRR, GGG |
+        loop states alternatives to previous state: BBB, Rxx, RRx, GGG | BBB, RRx, Rxx, GGG",
+  "no_t": 4,
+  "t_cap": 3,
+  "no_c": 3,
+  "no_b": 3,
+  "i_state": [
+    "BRG",
+    "RBx",
+    "RGx",
+    "GBx"
+  ],
+  "state_sequence": {
+    "p_seq": [
+      {
+        "p_state": [
+            "BRG",
+            "RBx",
+            "RGx",
+            "GBx"
+        ],
+        "poss_moves": [
+            {
+              "from_t": 0,
+              "to_t": 2
+            },
+            {
+              "from_t": 1,
+              "to_t": 3
+            },
+            {
+              "from_t": 3,
+              "to_t": 1
+            }
+        ]
+      },
+      {
+        "p_state": [
+            "BRx",
+            "RBx",
+            "RGG",
+            "GBx"
+        ],
+        "poss_moves": [
+            {
+              "from_t": 1,
+              "to_t": 3
+            },
+            {
+              "from_t": 3,
+              "to_t": 1
+            }
+        ]
+      },
+      {
+        "p_state": [
+            "BRx",
+            "Rxx",
+            "RGG",
+            "GBB"
+        ],
+        "poss_moves": [
+            {
+              "from_t": 0,
+              "to_t": 1
+            },
+            {
+              "from_t": 1,
+              "to_t": 0
+            }
+        ]
+      },
+      {
+        "p_state": [
+            "Bxx",
+            "RRx",
+            "RGG",
+            "GBB"
+        ],
+        "poss_moves": [
+            {
+              "from_t": 3,
+              "to_t": 0
+            }
+        ]
+      },
+      {
+        "p_state": [
+            "BBx",
+            "RRx",
+            "RGG",
+            "GBx"
+        ],
+        "poss_moves": [
+            {
+              "from_t": 0,
+              "to_t": 3
+            },
+            {
+              "from_t": 3,
+              "to_t": 0
+            }
+        ]
+      },
+      {
+        "p_state": [
+            "BBB",
+            "RRx",
+            "RGG",
+            "Gxx"
+        ],
+        "poss_moves": [
+            {
+              "from_t": 2,
+              "to_t": 3
+            }
+        ]
+      },
+      {
+        "p_state": [
+            "BBB",
+            "RRx",
+            "RGx",
+            "GGx"
+        ],
+        "poss_moves": [
+            {
+              "from_t": 2,
+              "to_t": 3
+            },
+            {
+              "from_t": 3,
+              "to_t": 2
+            }
+        ]
+      },
+      {
+        "p_state": [
+            "BBB",
+            "RRx",
+            "Rxx",
+            "GGG"
+        ],
+        "poss_moves": [
+            {
+              "from_t": 1,
+              "to_t": 2
+            },
+            {
+              "from_t": 2,
+              "to_t": 1
+            }
+        ]
+      }
+    ]
+  },
+  "states_visited": {
+    "s_visited": [
+      {
+        "p_state": [
+            "BRG",
+            "RBx",
+            "RGx",
+            "GBx"
+        ],
+        "poss_moves": [
+        ]
+      },
+      {
+        "p_state": [
+            "BRx",
+            "RBx",
+            "RGG",
+            "GBx"
+        ],
+        "poss_moves": [
+        ]
+      },
+      {
+        "p_state": [
+            "BRx",
+            "Rxx",
+            "RGG",
+            "GBB"
+        ],
+        "poss_moves": [
+        ]
+      },
+      {
+        "p_state": [
+            "Bxx",
+            "RRx",
+            "RGG",
+            "GBB"
+        ],
+        "poss_moves": [
+        ]
+      },
+      {
+        "p_state": [
+            "BBx",
+            "RRx",
+            "RGG",
+            "GBx"
+        ],
+        "poss_moves": [
+        ]
+      },
+      {
+        "p_state": [
+            "BBB",
+            "RRx",
+            "RGG",
+            "Gxx"
+        ],
+        "poss_moves": [
+        ]
+      },
+      {
+        "p_state": [
+            "BBB",
+            "RRx",
+            "RGx",
+            "GGx"
+        ],
+        "poss_moves": [
+        ]
+      },
+      {
+        "p_state": [
+            "BBB",
+            "RRx",
+            "Rxx",
+            "GGG"
+        ],
+        "poss_moves": [
+        ]
+      }
+    ]
+  },
+  "move_sequence": {
+    "m_seq": [
+      {
+        "from_t": 0,
+        "to_t": 2
+      },
+      {
+        "from_t": 1,
+        "to_t": 3
+      },
+      {
+        "from_t": 0,
+        "to_t": 1
+      },
+      {
+        "from_t": 3,
+        "to_t": 0
+      },
+      {
+        "from_t": 3,
+        "to_t": 0
+      },
+      {
+        "from_t": 2,
+        "to_t": 3
+      },
+      {
+        "from_t": 2,
+        "to_t": 3
+      },
+    ]
+  }
+}

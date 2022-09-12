@@ -1,0 +1,51 @@
+{
+  "game_name": "simple_gb",
+  "comments": "",
+  "no_t": 3,
+  "t_cap": 3,
+  "no_c": 2,
+  "no_b": 2,
+  "i_state": [
+    "xxx",
+    "GBx",
+    "BGx"
+  ],
+  "state_sequence": {
+    "p_seq": [
+      {
+        "p_state": [
+          "xxx",
+          "GBx",
+          "BGx"
+        ],
+        "poss_moves": [
+        ]
+      }
+    ]
+  },
+  "states_visited": {
+    "s_visited": [
+      {
+        "p_state": [
+          "xxx",
+          "GBx",
+          "BGx"
+        ],
+        "poss_moves": [
+        ]
+      }
+    ]
+  },
+  "move_sequence": {
+    "m_seq": [
+      {
+        "from_t": 1,
+        "to_t": 0
+      },
+      {
+        "from_t": 2,
+        "to_t": 0
+      }
+    ]
+  }
+}
