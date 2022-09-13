@@ -90,30 +90,30 @@ class StatesVisited:
 
 
 class BallSortGame:
-    def __init__(self):
+    def __init__(self, game_init_file):
         """Readiness:Full"""
         # TODO: Check constraints
-        with open('game_simple_gb.json', 'r') as game_file:
+        with open(game_init_file, 'r') as game_file:
             game_data = json.load(game_file)
-        game_name = game_data['game_name']
-        no_t = game_data['no_t']  # Number of tubes
-        t_cap = game_data['t_cap']  # Tube capacity
-        no_c = game_data['no_c']  # Number of ball colors
-        no_b = game_data['no_b']  # Number of balls of each color
+        self.game_name = game_data['game_name']
+        self.no_t = game_data['no_t']  # Number of tubes
+        self.t_cap = game_data['t_cap']  # Tube capacity
+        self.no_c = game_data['no_c']  # Number of ball colors
+        self.no_b = game_data['no_b']  # Number of balls of each color
         # Convention: tube contents listed bottom first
 
         # TODO: Remove i_state if not required
-        i_state = []
-        for _ in range(no_t):
+        self.i_state = []
+        for _ in range(self.no_t):
             tube_contents = game_data['i_state'][_]
-            i_state.append(TubeState(tube_contents))
+            self.i_state.append(TubeState(tube_contents))
         poss_moves = []
-        initial_state = PuzzleState(i_state, poss_moves)
+        initial_state = PuzzleState(self.i_state, poss_moves)
 
-        state_sequence = PuzzleSequence([])
+        self.state_sequence = PuzzleSequence([])
         for _i in range(len(game_data['state_sequence']['p_seq'])):
             p_state = []
-            for _j in range(no_t):
+            for _j in range(self.no_t):
                 tube_contents = game_data['state_sequence']['p_seq'][_i]['p_state'][_j]
                 p_state.append(TubeState(tube_contents))
             poss_moves = []
@@ -121,12 +121,12 @@ class BallSortGame:
                 from_t = game_data['state_sequence']['p_seq'][_i]['poss_moves'][_j]['from_t']
                 to_t = game_data['state_sequence']['p_seq'][_i]['poss_moves'][_j]['to_t']
                 poss_moves.append(Move(from_t, to_t))
-            state_sequence.p_seq.append(PuzzleState(p_state, poss_moves))
+            self.state_sequence.p_seq.append(PuzzleState(p_state, poss_moves))
 
-        states_visited = StatesVisited([])
+        self.states_visited = StatesVisited([])
         for _i in range(len(game_data['states_visited']['s_visited'])):
             p_state = []
-            for _j in range(no_t):
+            for _j in range(self.no_t):
                 tube_contents = game_data['states_visited']['s_visited'][_i]['p_state'][_j]
                 p_state.append(TubeState(tube_contents))
             poss_moves = []
@@ -134,16 +134,16 @@ class BallSortGame:
                 from_t = game_data['states_visited']['s_visited'][_i]['poss_moves'][_j]['from_t']
                 to_t = game_data['states_visited']['s_visited'][_i]['poss_moves'][_j]['to_t']
                 poss_moves.append(Move(from_t, to_t))
-            states_visited.s_visited.append(PuzzleState(p_state, poss_moves))
+            self.states_visited.s_visited.append(PuzzleState(p_state, poss_moves))
 
-        move_sequence = MoveSequence([])
+        self.move_sequence = MoveSequence([])
         for _i in range(len(game_data['move_sequence']['m_seq'])):
             from_t = game_data['move_sequence']['m_seq'][_i]['from_t']
             to_t = game_data['move_sequence']['m_seq'][_i]['to_t']
-            move_sequence.m_seq.append(Move(from_t, to_t))
+            self.move_sequence.m_seq.append(Move(from_t, to_t))
 
-        game_solved = False
-        game_over = False
+        self.game_solved = False
+        self.game_over = False
 
     def check_if_solved(self):
         """Readiness:Partial"""
@@ -211,11 +211,10 @@ class BallSortGame:
                 poss_state.p_state.append(TubeState(tube_contents))
             color = poss_state.p_state[_move.from_t].remove_ball(self.t_cap)
             poss_state.p_state[_move.to_t].add_ball(self.t_cap, color)
-            print(poss_state)
             # Check if the possible next state has already been visited and mark it for deletion
             for v_state in self.states_visited.s_visited:
                 if self.check_state_equivalence(poss_state, v_state):
-                    print(f'Possible state {poss_state} already visited: {v_state}')
+                    print(f'Possible state {poss_state} already visited as: {v_state}')
                     to_delete_moves.m_seq.append(_move)
         # Remove loop moves
         for del_move in to_delete_moves.m_seq:
@@ -266,7 +265,7 @@ def report_results(game):
 
 def main():
     """Solve a given game; Readiness:Partial"""
-    this_game = BallSortGame()
+    this_game = BallSortGame("game_simple_GB.json")
     while not this_game.game_over:
         this_game.check_if_solved()
         if this_game.game_solved:
