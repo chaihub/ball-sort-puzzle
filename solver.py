@@ -71,6 +71,19 @@ class MoveSequence:
 
 
 @dataclass
+class MoveEval:
+    """Class for recording a ball move in the puzzle, along with its evaluation."""
+    mv: Move
+    eval: int
+
+
+@dataclass
+class MoveEvalSequence:
+    """Class for recording the MoveEval sequence."""
+    me_seq: list[MoveEval]
+
+
+@dataclass
 class PuzzleState:
     """Class for recording a state of the puzzle."""
     p_state: list[TubeState]
@@ -142,6 +155,7 @@ class BallSortGame:
             to_t = game_data['move_sequence']['m_seq'][_i]['to_t']
             self.move_sequence.m_seq.append(Move(from_t, to_t))
 
+        self.moves_eval = MoveEvalSequence([])
         self.game_solved = False
         self.game_over = False
 
@@ -207,7 +221,7 @@ class BallSortGame:
             # Compute the possible next state
             poss_state = PuzzleState([], [])
             for _ in range(self.no_t):
-                tube_contents = state[_].contents
+                tube_contents = self.state_sequence.p_seq[-1].p_state[_].contents
                 poss_state.p_state.append(TubeState(tube_contents))
             color = poss_state.p_state[_move.from_t].remove_ball(self.t_cap)
             poss_state.p_state[_move.to_t].add_ball(self.t_cap, color)
@@ -222,28 +236,60 @@ class BallSortGame:
             self.state_sequence.p_seq[-1].poss_moves.remove(del_move)
 
     def moves_possible(self):
-        """Readiness:Hardcoded"""
+        """Readiness:Full"""
         "Check for non-empty set of possible moves."
-        pass
+        return False if len(self.state_sequence.p_seq[-1].poss_moves) == 0 else True
 
     def evaluate_possible_moves(self):
-        """Readiness:Hardcoded"""
-        pass
+        """Readiness:Full"""
+        "Evaluate possible moves and save their evaluation for further use."
+        self.moves_eval.me_seq = []
+        for _move in self.state_sequence.p_seq[-1].poss_moves:
+            # Compute the possible next state
+            poss_state = PuzzleState([], [])
+            for _ in range(self.no_t):
+                tube_contents = self.state_sequence.p_seq[-1].p_state[_].contents
+                poss_state.p_state.append(TubeState(tube_contents))
+            color = poss_state.p_state[_move.from_t].remove_ball(self.t_cap)
+            poss_state.p_state[_move.to_t].add_ball(self.t_cap, color)
+            # Compute the evaluation
+            s_eval = self.evaluate_new_state(poss_state)
+            # Add move and evaluation to self.moves_eval
+            self.moves_eval.me_seq.append(MoveEval(_move, s_eval))
 
-    def record_possible_moves(self):
+    def evaluate_new_state(self, state):
         """Readiness:Hardcoded"""
+        "Convention: Evaluation result will be a positive number. A lower result is more likely to solve the game."
         "Option 1: Compute weight of the color by adding up weights of all same-color balls,"
         "with balls at top getting highest weights."
         "Option 2: Prioritize moving into empty tubes."
         "Option 3: Prioritize uncovering balls with maximum weights, calculated same as in Option 1."
         "Option 4: Prioritize moving out of empty tubes."
-        pass
+        return 1
 
     def make_best_move(self):
-        """Readiness:Hardcoded"""
-        "Find moves with best assessments, and pick the first one."
-        "Create new state. Append to visited states list, state history, and move history."
-        pass
+        """Readiness:Full"""
+        # Find a move with the best assessment
+        i_eval = 0
+        i_index = 0
+        for _i, i_move in enumerate(self.moves_eval.me_seq):
+            if i_eval == 0 or i_move.eval < i_eval:
+                i_index = _i
+                i_eval = i_move.eval
+
+        # Create new state. Append to visited states list, state history, and move history.
+        p_state = []
+        from_t = self.moves_eval.me_seq[i_index].mv.from_t
+        to_t = self.moves_eval.me_seq[i_index].mv.to_t
+        for _ in range(self.no_t):
+            tube_contents = self.state_sequence.p_seq[-1].p_state[_].contents
+            p_state.append(TubeState(tube_contents))
+        color = p_state[from_t].remove_ball(self.t_cap)
+        p_state[to_t].add_ball(self.t_cap, color)
+        self.state_sequence.p_seq.append(PuzzleState(p_state, []))
+        self.states_visited.s_visited.append(PuzzleState(p_state, []))
+        self.move_sequence.m_seq.append(Move(from_t, to_t))
+
 
     def move_back(self):
         """Readiness:Hardcoded"""
@@ -275,7 +321,6 @@ def main():
         this_game.eliminate_loop_moves()
         if this_game.moves_possible():  # Go forward
             this_game.evaluate_possible_moves()
-            this_game.record_possible_moves()
             this_game.make_best_move()
         else:  # Can't go forward
             if this_game.at_starting_state():  # Can't go backward either
