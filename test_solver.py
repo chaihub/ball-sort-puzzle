@@ -128,7 +128,12 @@ class TestBallSortGame:
         assert correct_state_sequence and correct_states_visited and correct_move_sequence
 
     def test_move_back(self):
-        assert False
+        test_game = BallSortGame("game_simple_RGB_almostdone.json")
+        prev_state = test_game.state_sequence.p_seq[-2]
+        prev_move = test_game.move_sequence.m_seq[-2]
+        test_game.move_back()
+        assert prev_state == test_game.state_sequence.p_seq[-1] and \
+            prev_move == test_game.move_sequence.m_seq[-1]
 
     def test_at_starting_state(self):
         assert False

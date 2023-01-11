@@ -215,7 +215,6 @@ class BallSortGame:
         """Readiness:Full"""
         "For each possible move, compute the next state. Check if the next state has already been visited,"
         "using check_state_equivalence(). If yes, delete that possible move."
-        state = self.state_sequence.p_seq[-1].p_state
         to_delete_moves = MoveSequence([])
         for _move in self.state_sequence.p_seq[-1].poss_moves:
             # Compute the possible next state
@@ -290,23 +289,26 @@ class BallSortGame:
         self.states_visited.s_visited.append(PuzzleState(p_state, []))
         self.move_sequence.m_seq.append(Move(from_t, to_t))
 
-
     def move_back(self):
-        """Readiness:Hardcoded"""
+        """Readiness:Full"""
         "Delete last entries in state history and move history, but not in visited states list."
-        pass
+        self.state_sequence.p_seq.pop()
+        self.move_sequence.m_seq.pop()
 
     def at_starting_state(self):
-        """Readiness:Hardcoded"""
-        pass
+        """Readiness:Full"""
+        return self.check_state_equivalence(self.state_sequence.p_seq[0], self.state_sequence.p_seq[-1])
 
-
-def report_results(game):
-    """Readiness:Partial"""
-    print('Game result: ', 'Solved' if game.game_solved else 'Failed')
-    print(f'Starting state: {game.state_sequence[0]}')
-    print(f'Ending state: {game.state_sequence[-1]}')
-    print(f'Number of moves: {len(game.move_sequence)}')
+    def report_results(self):
+        """Readiness:Partial"""
+        print('Game result: ', 'Solved' if self.game_solved else 'Failed')
+        print('STATE SEQUENCE:')
+        print(*self.state_sequence.p_seq)
+        #print(f'Starting state: {self.state_sequence.p_seq[0]}')
+        #print(f'Ending state: {self.state_sequence.p_seq[-1]}')
+        print('MOVE SEQUENCE:')
+        print(*self.move_sequence.m_seq)
+        print(f'Number of moves: {len(self.move_sequence.m_seq)}')
 
 
 def main():
@@ -329,7 +331,7 @@ def main():
             else:  # Go backward
                 this_game.move_back()
 
-    report_results(this_game)
+    this_game.report_results()
 
 
 if __name__ == '__main__':
